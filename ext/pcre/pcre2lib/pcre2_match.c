@@ -606,7 +606,7 @@ BOOL utf = (mb->poptions & PCRE2_UTF) != 0;
 BOOL utf = FALSE;
 #endif
 
-fprintf(stderr, "match");
+fprintf(stderr, "match\n");
 
 
 /* This is the length of the last part of a backtracking frame that must be

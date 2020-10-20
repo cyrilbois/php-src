@@ -46,6 +46,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 static SLJIT_NOINLINE int jit_machine_stack_exec(jit_arguments *arguments, jit_function executable_func)
 {
+fprintf(stderr, "jit_machine_stack_exec\n");
+
+	
+	
 sljit_u8 local_space[MACHINE_STACK_SIZE];
 struct sljit_stack local_stack;
 
@@ -86,6 +90,8 @@ pcre2_jit_match(const pcre2_code *code, PCRE2_SPTR subject, PCRE2_SIZE length,
   PCRE2_SIZE start_offset, uint32_t options, pcre2_match_data *match_data,
   pcre2_match_context *mcontext)
 {
+fprintf(stderr, "pcre2_jit_match\n");
+	
 #ifndef SUPPORT_JIT
 
 (void)code;
