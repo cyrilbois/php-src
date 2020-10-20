@@ -606,6 +606,9 @@ BOOL utf = (mb->poptions & PCRE2_UTF) != 0;
 BOOL utf = FALSE;
 #endif
 
+fprintf(stderr, "match");
+
+
 /* This is the length of the last part of a backtracking frame that must be
 copied when a new frame is created. */
 
@@ -6039,6 +6042,9 @@ int rc;
 int was_zero_terminated = 0;
 const uint8_t *start_bits = NULL;
 const pcre2_real_code *re = (const pcre2_real_code *)code;
+
+fprintf(stderr, "pcre2_match");
+
 
 BOOL anchored;
 BOOL firstline;

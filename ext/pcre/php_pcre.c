@@ -1186,6 +1186,8 @@ PHPAPI void php_pcre_match_impl(pcre_cache_entry *pce, zend_string *subject_str,
 
 	ZVAL_UNDEF(&marks);
 
+fprintf(stderr, "php_pcre_match_impl");
+	
 	/* Overwrite the passed-in value for subpatterns with an empty array. */
 	if (subpats != NULL) {
 		subpats = zend_try_array_init(subpats);
