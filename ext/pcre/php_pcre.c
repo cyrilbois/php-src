@@ -928,6 +928,8 @@ PHPAPI pcre2_code* pcre_get_compiled_regex_ex(zend_string *regex, uint32_t *capt
 PHPAPI pcre2_match_data *php_pcre_create_match_data(uint32_t capture_count, pcre2_code *re)
 {/*{{{*/
 
+fprintf(stderr, "php_pcre_create_match_data\n");
+
 	assert(NULL != re);
 
 	if (EXPECTED(!mdata_used)) {
@@ -1186,7 +1188,7 @@ PHPAPI void php_pcre_match_impl(pcre_cache_entry *pce, zend_string *subject_str,
 
 	ZVAL_UNDEF(&marks);
 
-fprintf(stderr, "php_pcre_match_impl");
+fprintf(stderr, "php_pcre_match_impl\n");
 	
 	/* Overwrite the passed-in value for subpatterns with an empty array. */
 	if (subpats != NULL) {
@@ -1285,14 +1287,18 @@ fprintf(stderr, "php_pcre_match_impl");
 	/* Execute the regular expression. */
 #ifdef HAVE_PCRE_JIT_SUPPORT
 	if ((pce->preg_options & PREG_JIT) && options) {
+		fprintf(stderr, "call to pcre2_jit_match 1290\n");
 		count = pcre2_jit_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset2,
 				PCRE2_NO_UTF_CHECK, match_data, mctx);
 	} else
 #endif
+fprintf(stderr, "call to pcre2_match 1295\n");
+
 	count = pcre2_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset2,
 			options, match_data, mctx);
 
 	while (1) {
+		fprintf(stderr, "while (1)\n");
 		/* If something has matched */
 		if (count >= 0) {
 			/* Check for too many substrings condition. */
@@ -1335,6 +1341,7 @@ matched:
 								zend_hash_next_index_insert_new(Z_ARRVAL(match_sets[i]), &val);
 							}
 						}
+						fprintf(stderr, "call to pcre2_get_mark 1343\n");
 						mark = pcre2_get_mark(match_data);
 						/* Add MARK, if available */
 						if (mark) {
@@ -1373,6 +1380,7 @@ matched:
 					}
 				} else {			/* single pattern matching */
 					/* For each subpattern, insert it into the subpatterns array. */
+					fprintf(stderr, "call to pcre2_get_mark 1382\n");
 					mark = pcre2_get_mark(match_data);
 					populate_subpat_array(
 						subpats, subject, offsets, subpat_names, num_subpats, count, mark, flags);
@@ -1388,6 +1396,7 @@ matched:
 			   the match again at the same point. If this fails (picked up above) we
 			   advance to the next character. */
 			if (start_offset2 == offsets[0]) {
+				fprintf(stderr, "call to pcre2_match 1396\n");
 				count = pcre2_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset2,
 					PCRE2_NO_UTF_CHECK | PCRE2_NOTEMPTY_ATSTART | PCRE2_ANCHORED, match_data, mctx);
 				if (count >= 0) {
@@ -1431,10 +1440,12 @@ error:
 				pcre_handle_exec_error(PCRE2_ERROR_BADOFFSET);
 				break;
 			}
+			fprintf(stderr, "call to pcre2_jit_match 1440\n");
 			count = pcre2_jit_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset2,
 					PCRE2_NO_UTF_CHECK, match_data, mctx);
 		} else
 #endif
+fprintf(stderr, "call to pcre2_match 1445\n");
 		count = pcre2_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset2,
 				PCRE2_NO_UTF_CHECK, match_data, mctx);
 	}
@@ -1775,6 +1786,7 @@ matched:
 			   the match again at the same point. If this fails (picked up above) we
 			   advance to the next character. */
 			if (start_offset == offsets[0]) {
+				fprintf(stderr, "call to pcre2_match 1786\n");
 				count = pcre2_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset,
 					PCRE2_NO_UTF_CHECK | PCRE2_NOTEMPTY_ATSTART | PCRE2_ANCHORED, match_data, mctx);
 
@@ -1830,10 +1842,12 @@ error:
 
 #ifdef HAVE_PCRE_JIT_SUPPORT
 		if (pce->preg_options & PREG_JIT) {
+			fprintf(stderr, "call to pcre2_jit_match 1842\n");
 			count = pcre2_jit_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset,
 					PCRE2_NO_UTF_CHECK, match_data, mctx);
 		} else
 #endif
+fprintf(stderr, "call to pcre2_match 1846\n");
 		count = pcre2_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset,
 					PCRE2_NO_UTF_CHECK, match_data, mctx);
 	}
@@ -1911,10 +1925,12 @@ static zend_string *php_pcre_replace_func_impl(pcre_cache_entry *pce, zend_strin
 	/* Execute the regular expression. */
 #ifdef HAVE_PCRE_JIT_SUPPORT
 	if ((pce->preg_options & PREG_JIT) && options) {
+		fprintf(stderr, "call to pcre2_jit_match 1925\n");
 		count = pcre2_jit_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset,
 				PCRE2_NO_UTF_CHECK, match_data, mctx);
 	} else
 #endif
+fprintf(stderr, "call to pcre2_match 1929\n");
 	count = pcre2_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset,
 			options, match_data, mctx);
 
@@ -1986,6 +2002,7 @@ matched:
 			   the match again at the same point. If this fails (picked up above) we
 			   advance to the next character. */
 			if (start_offset == offsets[0]) {
+				fprintf(stderr, "call to pcre2_match 2002\n");
 				count = pcre2_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset,
 					PCRE2_NO_UTF_CHECK | PCRE2_NOTEMPTY_ATSTART | PCRE2_ANCHORED, match_data, mctx);
 
@@ -2040,10 +2057,12 @@ error:
 		}
 #ifdef HAVE_PCRE_JIT_SUPPORT
 		if ((pce->preg_options & PREG_JIT)) {
+			fprintf(stderr, "call to pcre2_jit_match 2057\n");
 			count = pcre2_jit_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset,
 					PCRE2_NO_UTF_CHECK, match_data, mctx);
 		} else
 #endif
+fprintf(stderr, "call to pcre2_match 2061\n");
 		count = pcre2_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset,
 				PCRE2_NO_UTF_CHECK, match_data, mctx);
 	}
@@ -2581,10 +2600,12 @@ PHPAPI void php_pcre_split_impl(pcre_cache_entry *pce, zend_string *subject_str,
 
 #ifdef HAVE_PCRE_JIT_SUPPORT
 	if ((pce->preg_options & PREG_JIT) && options) {
+		fprintf(stderr, "call to pcre2_jit_match 2600\n");
 		count = pcre2_jit_match(pce->re, (PCRE2_SPTR)subject, ZSTR_LEN(subject_str), start_offset,
 				PCRE2_NO_UTF_CHECK, match_data, mctx);
 	} else
 #endif
+fprintf(stderr, "call to pcre2_match 2604\n");
 	count = pcre2_match(pce->re, (PCRE2_SPTR)subject, ZSTR_LEN(subject_str), start_offset,
 			options, match_data, mctx);
 
@@ -2646,6 +2667,7 @@ matched:
 			   the match again at the same point. If this fails (picked up above) we
 			   advance to the next character. */
 			if (start_offset == offsets[0]) {
+				fprintf(stderr, "call to pcre2_match 2667\n");
 				count = pcre2_match(pce->re, (PCRE2_SPTR)subject, ZSTR_LEN(subject_str), start_offset,
 					PCRE2_NO_UTF_CHECK | PCRE2_NOTEMPTY_ATSTART | PCRE2_ANCHORED, match_data, mctx);
 				if (count >= 0) {
@@ -2680,10 +2702,12 @@ error:
 
 #ifdef HAVE_PCRE_JIT_SUPPORT
 		if (pce->preg_options & PREG_JIT) {
+			fprintf(stderr, "call to pcre2_jit_match 2702\n");
 			count = pcre2_jit_match(pce->re, (PCRE2_SPTR)subject, ZSTR_LEN(subject_str), start_offset,
 					PCRE2_NO_UTF_CHECK, match_data, mctx);
 		} else
 #endif
+fprintf(stderr, "call to pcre2_match 2707\n");
 		count = pcre2_match(pce->re, (PCRE2_SPTR)subject, ZSTR_LEN(subject_str), start_offset,
 				PCRE2_NO_UTF_CHECK, match_data, mctx);
 	}
@@ -2922,10 +2946,12 @@ PHPAPI void  php_pcre_grep_impl(pcre_cache_entry *pce, zval *input, zval *return
 		/* Perform the match */
 #ifdef HAVE_PCRE_JIT_SUPPORT
 		if ((pce->preg_options & PREG_JIT) && options) {
+			fprintf(stderr, "call to pcre2_jit_match 2946\n");
 			count = pcre2_jit_match(pce->re, (PCRE2_SPTR)ZSTR_VAL(subject_str), ZSTR_LEN(subject_str), 0,
 					PCRE2_NO_UTF_CHECK, match_data, mctx);
 		} else
 #endif
+fprintf(stderr, "call to pcre2_match 2951\n");
 		count = pcre2_match(pce->re, (PCRE2_SPTR)ZSTR_VAL(subject_str), ZSTR_LEN(subject_str), 0,
 				options, match_data, mctx);
 
