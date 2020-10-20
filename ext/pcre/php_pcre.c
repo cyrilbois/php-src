@@ -1292,7 +1292,6 @@ fprintf(stderr, "php_pcre_match_impl\n");
 				PCRE2_NO_UTF_CHECK, match_data, mctx);
 	} else
 #endif
-fprintf(stderr, "call to pcre2_match 1295\n");
 
 	count = pcre2_match(pce->re, (PCRE2_SPTR)subject, subject_len, start_offset2,
 			options, match_data, mctx);

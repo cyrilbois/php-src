@@ -6043,7 +6043,7 @@ int was_zero_terminated = 0;
 const uint8_t *start_bits = NULL;
 const pcre2_real_code *re = (const pcre2_real_code *)code;
 
-fprintf(stderr, "pcre2_match");
+fprintf(stderr, "pcre2_match\n");
 
 
 BOOL anchored;
@@ -6273,6 +6273,7 @@ if (use_jit)
   /* If JIT returns BADOPTION, which means that the selected complete or
   partial matching mode was not compiled, fall through to the interpreter. */
 
+   fprintf(stderr, "call pcre2_jit_match 6276\n");
   rc = pcre2_jit_match(code, subject, length, start_offset, options,
     match_data, mcontext);
   if (rc != PCRE2_ERROR_JIT_BADOPTION)
@@ -6971,6 +6972,7 @@ for(;;)
   mb->end_offset_top = 0;
   mb->skip_arg_count = 0;
 
+  fprintf(stderr, "call match 6974\n");
   rc = match(start_match, mb->start_code, match_data->ovector,
     match_data->oveccount, re->top_bracket, frame_size, mb);
 
